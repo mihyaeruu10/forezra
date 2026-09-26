@@ -1,0 +1,2538 @@
+/* ==========================================================================
+   ORANGE CAT JOURNEY — STYLESHEET
+   Phase 1: Design System, Foundations, & Layout Architecture
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN SYSTEM & CSS VARIABLES
+   -------------------------------------------------------------------------- */
+:root {
+  /* Warm & Cozy Palette */
+  --color-bg: #FAF6EE;
+  --color-bg-alt: #F4EFE6;
+  --color-card-bg: rgba(255, 253, 248, 0.88);
+  --color-card-border: #F0E6D6;
+
+  --color-text-main: #5C4334;
+  --color-text-muted: #8C6D58;
+  --color-text-light: #A38A78;
+
+  --color-orange-primary: #E78A53;
+  --color-orange-soft: #F6AD7B;
+  --color-orange-light: #FFF0E6;
+  --color-orange-dark: #D3753E;
+
+  --color-yellow-accent: #F7D070;
+  --color-yellow-light: #FEE8B0;
+
+  --color-validation-error: #E57373;
+  --color-validation-bg: #FFEBEE;
+
+  /* Typography */
+  --font-main: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Quicksand', 'Nunito', sans-serif;
+  --font-handwriting: 'Caveat', cursive, sans-serif;
+
+  /* Elevation & Shadows */
+  --shadow-soft-sm: 0 4px 12px rgba(92, 67, 52, 0.05);
+  --shadow-soft-md: 0 12px 32px rgba(92, 67, 52, 0.08);
+  --shadow-soft-lg: 0 20px 48px rgba(92, 67, 52, 0.12);
+  --shadow-orange-glow: 0 8px 24px rgba(231, 138, 83, 0.25);
+  --shadow-inner-soft: inset 0 2px 4px rgba(92, 67, 52, 0.04);
+
+  /* Border Radii */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --transition-normal: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --transition-slow: 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --------------------------------------------------------------------------
+   2. BASE & RESET STYLES
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: var(--font-main);
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   3. LAYOUT & BACKGROUND AMBIENT / CINEMATIC PARTICLES
+   -------------------------------------------------------------------------- */
+
+/* Floating Ambient Circles for Atmosphere (Scenes 1-3) */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  transition: opacity 1s ease;
+}
+
+.ambient-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.45;
+  animation: floatAmbient 12s ease-in-out infinite alternate;
+}
+
+.circle-1 {
+  width: 320px;
+  height: 320px;
+  background: var(--color-yellow-light);
+  top: -60px;
+  left: -40px;
+}
+
+.circle-2 {
+  width: 380px;
+  height: 380px;
+  background: var(--color-orange-light);
+  bottom: -80px;
+  right: -50px;
+  animation-delay: -4s;
+}
+
+.circle-3 {
+  width: 250px;
+  height: 250px;
+  background: #F4EFE6;
+  top: 40%;
+  right: 15%;
+  animation-delay: -8s;
+}
+
+/* Post-Letter Cinematic Background (assets/Background/Manips.jpg) */
+.post-letter-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-image: url('assets/Background/Manips.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.post-letter-bg.active {
+  opacity: 1;
+}
+
+.post-letter-overlay {
+  position: absolute;
+  inset: 0;
+  /* Dark translucent overlay (~40% opacity) for warmth, intimate cinematic feel, and clear readability */
+  background: radial-gradient(circle at center, rgba(30, 20, 15, 0.36) 0%, rgba(18, 12, 8, 0.48) 100%);
+}
+
+/* App Main Container */
+.app-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 860px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 64px;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   4. REUSABLE UI COMPONENTS
+   -------------------------------------------------------------------------- */
+
+/* Glassmorphism Cozy Card */
+.cozy-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  box-shadow: var(--shadow-soft-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.card-badge-icon {
+  width: 72px;
+  height: 72px;
+  background: var(--color-orange-light);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  box-shadow: var(--shadow-soft-sm);
+}
+
+.card-badge-icon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center;
+}
+
+.pulse-badge {
+  animation: gentlePulse 3s ease-in-out infinite;
+}
+
+/* Typography Hierarchy */
+.subtitle-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-orange-primary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.title-text {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.25;
+  margin-bottom: 24px;
+}
+
+/* Reusable Primary Button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 28px;
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--color-orange-soft) 0%, var(--color-orange-primary) 100%);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-orange-glow);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(231, 138, 83, 0.35);
+  background: linear-gradient(135deg, #F8B587 0%, var(--color-orange-dark) 100%);
+}
+
+.btn-primary:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 4px 12px rgba(231, 138, 83, 0.2);
+}
+
+.btn-arrow {
+  transition: transform var(--transition-fast);
+}
+
+.btn-primary:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* Input Fields */
+.input-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.cozy-input {
+  width: 100%;
+  padding: 16px 44px 16px 20px;
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  background: var(--color-bg);
+  border: 2px solid var(--color-card-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-inner-soft);
+}
+
+.cozy-input::placeholder {
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+.cozy-input:focus {
+  border-color: var(--color-orange-soft);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(246, 173, 123, 0.2);
+}
+
+.input-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Validation Toast / Message */
+.validation-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--color-validation-bg);
+  border: 1px solid rgba(229, 115, 115, 0.3);
+  border-radius: var(--radius-sm);
+  color: var(--color-validation-error);
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: left;
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.validation-message.hidden {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   5. SCENE TRANSITION ARCHITECTURE
+   -------------------------------------------------------------------------- */
+.scene {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.scene.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scene.active {
+  display: flex !important;
+  opacity: 1;
+  animation: sceneFadeIn var(--transition-slow) forwards;
+}
+
+/* --------------------------------------------------------------------------
+   6. WELCOME SCREEN STYLES (#welcome-scene)
+   -------------------------------------------------------------------------- */
+#welcome-scene {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.welcome-card {
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   7. INTRO SCREEN STYLES (#intro-scene)
+   -------------------------------------------------------------------------- */
+#intro-scene {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.intro-card {
+  max-width: 520px;
+}
+
+.greeting-title {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+}
+
+.highlight-name {
+  color: var(--color-orange-primary);
+  position: relative;
+  display: inline-block;
+}
+
+.highlight-name::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: var(--color-yellow-light);
+  z-index: -1;
+  border-radius: 4px;
+}
+
+.intro-paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.cozy-p {
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.highlight-p {
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.btn-journey {
+  margin-top: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   8. GAME SCENE & CANVAS LAYOUT (#game-scene)
+   -------------------------------------------------------------------------- */
+#game-scene {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.game-container {
+  width: 100%;
+  max-width: 840px;
+  background: var(--color-card-bg);
+  backdrop-filter: blur(16px);
+  border: 2px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-soft-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* HUD Header */
+.game-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(244, 239, 230, 0.7);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-card-border);
+}
+
+.hud-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.hud-icon {
+  font-size: 1.2rem;
+}
+
+/* Canvas Viewport Wrapper */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  max-height: 480px;
+  background: #EBE3D5;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid var(--color-card-border);
+  box-shadow: var(--shadow-inner-soft);
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* Floating Message Toast Container */
+.floating-msg-container {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Loading & Transition Overlay */
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(250, 246, 238, 0.92);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  transition: opacity var(--transition-slow);
+}
+
+.spinner-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.cat-loader {
+  font-size: 2.8rem;
+  animation: bounceCat 1.2s ease-in-out infinite;
+}
+
+.hud-text-short {
+  display: none;
+}
+
+.loading-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.game-fade-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(250, 246, 238, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border-radius: inherit;
+  transition: opacity 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.game-fade-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.end-journey-card {
+  width: min(92%, 420px);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  animation: floatUp 0.8s ease-out forwards;
+}
+
+.end-icon {
+  font-size: 2.5rem;
+}
+
+.end-journey-text {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.4;
+}
+
+.btn-letter-trigger {
+  margin-top: 12px;
+  max-width: 260px;
+}
+
+/* Floating Collectible Text Badges */
+.floating-toast {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: rgba(255, 253, 248, 0.95);
+  border: 1.5px solid var(--color-orange-soft);
+  border-radius: var(--radius-full);
+  padding: 6px 16px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-orange-primary);
+  box-shadow: var(--shadow-orange-glow);
+  pointer-events: none;
+  animation: floatToast 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  z-index: 15;
+  white-space: nowrap;
+}
+
+@keyframes floatToast {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -24px) scale(1.05);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -36px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -48px) scale(0.95);
+  }
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Game Controls Bar & D-Pad */
+.game-controls-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.desktop-controls-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.key-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--color-card-border);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.hint-divider {
+  margin: 0 4px;
+  color: var(--color-text-light);
+}
+
+/* Mobile D-Pad Button Layout */
+.mobile-dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.dpad-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dpad-btn {
+  width: 52px;
+  height: 52px;
+  background: #FFFFFF;
+  border: 2px solid var(--color-card-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 4px 10px rgba(92, 67, 52, 0.08);
+  transition: all var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dpad-btn:hover, .dpad-btn:active {
+  background: var(--color-orange-light);
+  border-color: var(--color-orange-soft);
+  color: var(--color-orange-primary);
+  transform: scale(0.94);
+}
+
+.dpad-center {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  opacity: 0.5;
+}
+
+/* --------------------------------------------------------------------------
+   9. ANIMATIONS & KEYFRAMES
+   -------------------------------------------------------------------------- */
+@keyframes sceneFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes floatAmbient {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -20px) scale(1.08);
+  }
+  100% {
+    transform: translate(-20px, 30px) scale(0.95);
+  }
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: var(--shadow-soft-sm);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 8px 24px rgba(246, 173, 123, 0.3);
+  }
+}
+
+@keyframes bounceCat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   10. RESPONSIVE BREAKPOINTS & MOBILE REFINEMENT
+   -------------------------------------------------------------------------- */
+
+/* Fluid Mobile Layout Adaptations (320px to 600px viewports & Android/iOS devices) */
+@media (max-width: 600px) {
+  html, body {
+    min-height: 100dvh;
+    min-height: 100svh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .app-container {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    min-height: 100svh;
+    padding: clamp(16px, 3vh, 28px) clamp(14px, 4vw, 20px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Cards on Welcome & Intro Screens */
+  .cozy-card {
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+    padding: clamp(20px, 3.5vh, 32px) clamp(18px, 5vw, 28px);
+    border-radius: clamp(16px, 4vw, 24px);
+    box-sizing: border-box;
+  }
+
+  .card-badge-icon {
+    width: clamp(48px, 12vw, 64px);
+    height: clamp(48px, 12vw, 64px);
+    font-size: clamp(1.3rem, 4vw, 1.7rem);
+    margin-bottom: clamp(10px, 1.8vh, 16px);
+  }
+
+  .title-text {
+    font-size: clamp(1.25rem, 4.5vw, 1.7rem);
+    margin-bottom: clamp(10px, 2vh, 18px);
+  }
+
+  .greeting-title {
+    font-size: clamp(1.3rem, 5vw, 1.8rem);
+  }
+
+  .cozy-p {
+    font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+  }
+
+  .cozy-input {
+    padding: clamp(11px, 1.8vh, 14px) 40px clamp(11px, 1.8vh, 14px) 14px;
+    font-size: clamp(0.92rem, 3vw, 1rem);
+  }
+
+  .btn-primary {
+    padding: clamp(11px, 1.8vh, 14px) clamp(18px, 4vw, 24px);
+    font-size: clamp(0.92rem, 3vw, 1rem);
+  }
+
+  /* ================= GAME SCENE MOBILE LAYOUT ================= */
+  .game-container {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: calc(100dvh - 32px);
+    max-height: calc(100svh - 32px);
+    padding: clamp(8px, 1.5vh, 14px) clamp(8px, 2vw, 14px);
+    border-radius: clamp(14px, 4vw, 22px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(6px, 1.2vh, 12px);
+    overflow: hidden;
+  }
+
+  /* Top: Compact Single-Line HUD */
+  .game-hud {
+    flex-shrink: 0;
+    padding: clamp(6px, 1.2vh, 10px) clamp(10px, 2.5vw, 16px);
+    border-radius: clamp(8px, 2vw, 14px);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .hud-item {
+    font-size: clamp(0.72rem, 2.6vw, 0.85rem);
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .hud-text-full {
+    display: none;
+  }
+
+  .hud-text-short {
+    display: inline;
+  }
+
+  .hud-icon {
+    font-size: clamp(0.9rem, 3vw, 1.15rem);
+  }
+
+  .hud-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Middle: Balanced Canvas Viewport */
+  .canvas-wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-height: clamp(180px, 38dvh, 320px);
+    aspect-ratio: 16 / 10;
+    border-radius: clamp(10px, 2.5vw, 16px);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #game-canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: inherit;
+  }
+
+  /* Non-Clipping Overlay & Completion Card */
+  .game-fade-overlay {
+    padding: clamp(8px, 2vh, 16px);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+  }
+
+  .end-journey-card {
+    width: min(92%, 360px);
+    max-height: 90%;
+    padding: clamp(16px, 2.5vh, 24px) clamp(14px, 3vw, 20px);
+    gap: clamp(8px, 1.5vh, 14px);
+    border-radius: clamp(14px, 3.5vw, 22px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .end-icon {
+    font-size: clamp(1.75rem, 5vw, 2.2rem);
+  }
+
+  .end-journey-text {
+    font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+    line-height: 1.35;
+    max-width: 100%;
+  }
+
+  .btn-letter-trigger {
+    margin-top: clamp(4px, 1vh, 8px);
+    padding: clamp(10px, 1.6vh, 14px) clamp(16px, 3vw, 22px);
+    font-size: clamp(0.88rem, 2.8vw, 1rem);
+    width: 100%;
+    max-width: 220px;
+  }
+
+  /* Bottom: Fixed Touch D-Pad with Comfortable Finger Spacing */
+  .game-controls-bar {
+    flex-shrink: 0;
+    padding: 0 0 max(4px, env(safe-area-inset-bottom)) 0;
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .desktop-controls-hint {
+    display: none;
+  }
+
+  .mobile-dpad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(3px, 1vw, 5px);
+    touch-action: manipulation;
+  }
+
+  .dpad-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(3px, 1vw, 5px);
+  }
+
+  .dpad-btn {
+    width: clamp(38px, 10.5vw, 46px);
+    height: clamp(38px, 10.5vw, 46px);
+    border-radius: clamp(8px, 2.5vw, 12px);
+    box-shadow: 0 2px 6px rgba(92, 67, 52, 0.08);
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .dpad-btn svg {
+    width: clamp(16px, 4vw, 20px);
+    height: clamp(16px, 4vw, 20px);
+  }
+
+  .dpad-center {
+    width: clamp(38px, 10.5vw, 46px);
+    height: clamp(38px, 10.5vw, 46px);
+    font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+  }
+
+  .envelope-wrapper {
+    width: min(280px, calc(100vw - 48px));
+    height: auto;
+    aspect-ratio: 14 / 9;
+  }
+
+  .envelope-paper-slide {
+    height: calc(100% - 35px);
+  }
+
+  .envelope-flap {
+    height: 56%;
+  }
+
+  .verification-modal {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+}
+
+/* Extra Small Android / iPhone SE Screens (320px to 360px width) */
+@media (max-width: 360px) {
+  .game-hud {
+    padding: 4px 8px;
+  }
+
+  .hud-item {
+    font-size: 0.68rem;
+  }
+
+  .canvas-wrapper {
+    max-height: 34dvh;
+  }
+
+  .dpad-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dpad-center {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Desktop Screens (> 600px) */
+@media (min-width: 601px) {
+  .mobile-dpad {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. SCENE 4: LETTER SCENE & ENVELOPE REVEAL
+   -------------------------------------------------------------------------- */
+
+/* Stage 1: Physical Envelope Animation */
+.envelope-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 40px 20px;
+  perspective: 900px;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.envelope-wrapper {
+  position: relative;
+  width: 280px;
+  height: 180px;
+  background: #EADDC9;
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(92, 67, 52, 0.14), 0 4px 10px rgba(92, 67, 52, 0.08);
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.envelope-back {
+  position: absolute;
+  inset: 0;
+  background: #E2D3BD;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+/* Sliding Paper Preview inside Envelope */
+.envelope-paper-slide {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  height: 145px;
+  background: #FCFAF5;
+  border-radius: 6px;
+  box-shadow: 0 -2px 10px rgba(92, 67, 52, 0.06);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.5s, opacity 0.6s ease;
+  transform-origin: bottom center;
+}
+
+.paper-lines-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 80%;
+}
+
+.preview-line {
+  height: 4px;
+  background: #E6D9C8;
+  border-radius: 2px;
+}
+
+.line-1 { width: 90%; }
+.line-2 { width: 75%; }
+.line-3 { width: 60%; }
+
+.preview-heart {
+  font-size: 1.5rem;
+  margin-top: 4px;
+  animation: gentlePulse 2s infinite ease-in-out;
+}
+
+/* Envelope Front Pocket (Folds) */
+.envelope-pocket {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0, 50% 55%);
+  background: #DFCDB3;
+  border-radius: 12px;
+  z-index: 3;
+  box-shadow: inset 0 2px 8px rgba(92, 67, 52, 0.05);
+}
+
+/* Envelope Top Flap */
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: #F0E3CF;
+  border-radius: 12px 12px 0 0;
+  transform-origin: top center;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  box-shadow: 0 4px 8px rgba(92, 67, 52, 0.08);
+}
+
+.wax-seal {
+  position: absolute;
+  bottom: -16px;
+  width: 36px;
+  height: 36px;
+  background: radial-gradient(circle, #E78A53 0%, #C75D38 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 1.1rem;
+  box-shadow: 0 3px 8px rgba(199, 93, 56, 0.4);
+  transition: opacity 0.4s ease;
+}
+
+/* When Envelope Opens */
+.envelope-wrapper.opening .envelope-flap {
+  transform: rotateX(-180deg);
+  z-index: 1;
+}
+
+.envelope-wrapper.opening .envelope-paper-slide {
+  transform: translateY(-135px);
+  box-shadow: 0 8px 24px rgba(92, 67, 52, 0.15);
+}
+
+.envelope-hint-text {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-orange-primary);
+  animation: gentlePulse 2s infinite ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   11. SCENE 4: LETTER SCENE (#letter-scene)
+   -------------------------------------------------------------------------- */
+#letter-scene {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Stage 2: Full Readable Letter Card */
+.letter-card-container {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  animation: sceneFadeIn 0.8s ease-out forwards;
+}
+
+.letter-paper {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  background: #FCFAF5;
+  border: 1px solid rgba(216, 201, 180, 0.75);
+  border-radius: 20px;
+  padding: clamp(24px, 5vw, 44px);
+  box-shadow: 0 16px 40px rgba(92, 67, 52, 0.08), 0 2px 6px rgba(92, 67, 52, 0.04);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+/* Decorative Stamp & Date */
+.letter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed rgba(216, 201, 180, 0.6);
+}
+
+.letter-stamp {
+  display: inline-block;
+}
+
+.stamp-border {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  border: 2px dashed #E78A53;
+  border-radius: 6px;
+  background: #FFF8F0;
+}
+
+.stamp-cat {
+  font-size: 1.2rem;
+}
+
+.stamp-postmark {
+  font-family: var(--font-main);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #D3753E;
+}
+
+.letter-date {
+  font-family: 'Times New Roman', Times, 'Georgia', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+/* Letter Salutation */
+.letter-salutation {
+  font-family: 'Times New Roman', Times, 'Georgia', serif;
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  font-weight: 700;
+  color: #2E231C;
+  margin-bottom: 18px;
+  letter-spacing: 0.2px;
+}
+
+/* Natural Letter Body (Times New Roman Typography) */
+.letter-content-scroll {
+  position: relative;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.letter-body-text {
+  font-family: 'Times New Roman', Times, 'Georgia', 'Cambria', serif;
+  font-size: clamp(13.5px, 1.8vw, 15px);
+  line-height: 1.78;
+  color: #2E231C;
+  text-align: justify;
+  word-break: break-word;
+}
+
+.letter-body-text p {
+  margin-bottom: 1.35em;
+}
+
+.letter-body-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Blinking Typewriter Cursor */
+.typewriter-cursor {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-orange-primary);
+  margin-left: 2px;
+  animation: cursorBlink 0.75s infinite ease-in-out;
+  vertical-align: baseline;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Letter Closing */
+.letter-closing {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(216, 201, 180, 0.6);
+  font-family: 'Times New Roman', Times, 'Georgia', serif;
+  font-style: italic;
+  color: #4A3A2F;
+}
+
+.closing-phrase {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.closing-signature {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2E231C;
+}
+
+/* Floating Skip Typing Button */
+.btn-skip-typing {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 253, 248, 0.85);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-full);
+  font-family: var(--font-main);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  box-shadow: var(--shadow-soft-sm);
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+.btn-skip-typing:hover {
+  background: #FFFFFF;
+  color: var(--color-orange-primary);
+  border-color: var(--color-orange-soft);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   12. DOCUMENT DOWNLOAD SECTION
+   -------------------------------------------------------------------------- */
+.download-section {
+  width: 100%;
+  animation: sceneFadeIn 0.8s ease-out forwards;
+}
+
+.download-card {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  background: rgba(255, 253, 248, 0.94);
+  border: 2px dashed rgba(231, 138, 83, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-soft-md);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.download-card:hover {
+  border-color: var(--color-orange-soft);
+  box-shadow: var(--shadow-soft-lg);
+}
+
+.doc-badge-icon {
+  width: 64px;
+  height: 64px;
+  background: #F0F4F8;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(43, 87, 154, 0.12);
+  animation: floatAmbient 6s infinite alternate ease-in-out;
+}
+
+.doc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.doc-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.doc-format {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.doc-ext {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #E8EEF5;
+  border-radius: 4px;
+  font-weight: 800;
+  color: #2B579A;
+  font-size: 0.8rem;
+}
+
+.btn-download {
+  width: 100%;
+  max-width: 320px;
+  padding: 14px 24px;
+  font-size: 1.05rem;
+}
+
+/* --------------------------------------------------------------------------
+   13. TWO-STEP VERIFICATION MODAL ("Lu Ezra bukan?")
+   -------------------------------------------------------------------------- */
+.verification-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.verification-modal.hidden {
+  display: none !important;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(92, 67, 52, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: 1001;
+  width: 100%;
+  max-width: 380px;
+  background: #FFFDF8;
+  border: 2px solid var(--color-card-border);
+  border-radius: 28px;
+  padding: 36px 28px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(92, 67, 52, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-icon-badge {
+  width: 68px;
+  height: 68px;
+  background: var(--color-orange-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  box-shadow: var(--shadow-soft-sm);
+  animation: gentlePulse 2.5s infinite ease-in-out;
+}
+
+.modal-icon-badge img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center;
+}
+
+.modal-question {
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  line-height: 1.25;
+}
+
+.modal-subtext {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.modal-feedback-box {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--color-orange-light);
+  border: 1.5px solid var(--color-orange-soft);
+  border-radius: var(--radius-md);
+  animation: floatUp 0.4s ease-out;
+}
+
+.modal-feedback-box.denied {
+  background: #FFEBEE;
+  border-color: rgba(229, 115, 115, 0.4);
+}
+
+.modal-feedback-text {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-orange-primary);
+}
+
+.modal-feedback-box.denied .modal-feedback-text {
+  color: #D32F2F;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.modal-actions .btn-primary,
+.modal-actions .btn-secondary {
+  flex: 1;
+  padding: 14px 20px;
+  font-size: 1.05rem;
+}
+
+/* Secondary Button Component */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  background: #F0EAE1;
+  border: 2px solid var(--color-card-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.btn-secondary:hover {
+  background: #E8E0D4;
+  transform: translateY(-2px);
+  color: #3D2B20;
+}
+
+.btn-secondary:active {
+  transform: translateY(1px);
+}
+
+/* ---------------- MUSIC PLAYER STYLES (MATCHES DOWNLOAD CARD) ---------------- */
+.music-section {
+  width: 100%;
+  animation: sceneFadeIn 0.8s ease-out forwards;
+}
+
+.music-card {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  background: rgba(255, 253, 248, 0.94);
+  border: 2px dashed rgba(231, 138, 83, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  box-shadow: var(--shadow-soft-md);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  box-sizing: border-box;
+}
+
+.music-card:hover {
+  border-color: var(--color-orange-soft);
+  box-shadow: var(--shadow-soft-lg);
+}
+
+.music-header {
+  width: 100%;
+  text-align: center;
+}
+
+.music-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.music-heading {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.3;
+}
+
+.music-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.music-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(231, 138, 83, 0.18);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-soft-sm);
+  backdrop-filter: blur(8px);
+}
+
+/* Top Row: Artwork + Meta */
+.music-top-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.music-cover-wrapper {
+  position: relative;
+  flex: 0 0 84px;
+  width: 84px;
+  height: 84px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(92, 67, 52, 0.12);
+  border: 1px solid rgba(147, 108, 83, 0.16);
+  background: #F4EFE6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.music-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: inherit;
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+.music-cover-img.is-transitioning {
+  opacity: 0.3;
+}
+
+.music-cover-wrapper.is-playing .music-cover-img {
+  transform: scale(1.03);
+}
+
+.music-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.music-title {
+  font-family: var(--font-heading);
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-artist {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Progress Wrap */
+.music-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.music-progress {
+  width: 100%;
+  height: 8px;
+  background: rgba(92, 67, 52, 0.1);
+  border-radius: var(--radius-full);
+  position: relative;
+  cursor: pointer;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.music-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #F6AD7B 0%, #E78A53 100%);
+  pointer-events: none;
+  transition: width 0.1s linear;
+}
+
+.music-progress::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--progress, 0%) - 6px);
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background: #FFFFFF;
+  border: 2.5px solid #E78A53;
+  box-shadow: 0 2px 6px rgba(231, 138, 83, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.music-progress:hover::after,
+.music-progress:focus-visible::after,
+.music-progress:active::after {
+  opacity: 1;
+}
+
+.music-times {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  padding: 0 2px;
+}
+
+/* Bottom Row: Controls */
+.music-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.music-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 0 auto;
+}
+
+.music-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(231, 138, 83, 0.25);
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(92, 67, 52, 0.06);
+  outline: none;
+  padding: 0;
+  user-select: none;
+}
+
+.music-btn:hover,
+.music-btn:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(92, 67, 52, 0.12);
+  border-color: var(--color-orange-soft);
+  color: var(--color-orange-primary);
+}
+
+.music-btn:active {
+  transform: translateY(1px);
+}
+
+.music-btn-prev,
+.music-btn-next {
+  width: 40px;
+  height: 40px;
+}
+
+.music-btn-play {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #F6AD7B 0%, #E78A53 100%);
+  color: #FFFFFF !important;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(231, 138, 83, 0.35);
+}
+
+.music-btn-play:hover,
+.music-btn-play:focus-visible {
+  background: linear-gradient(135deg, #F8B687 0%, #EA7E42 100%);
+  box-shadow: 0 10px 24px rgba(231, 138, 83, 0.45);
+  transform: scale(1.06) translateY(-1px);
+}
+
+/* Ensure no visible playlist or spoiler elements */
+.music-playlist,
+.music-playlist-row,
+.music-spoiler,
+.music-pos,
+.music-pos-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 600px) {
+  .music-card {
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .music-widget {
+    padding: 14px 14px;
+    gap: 14px;
+  }
+
+  .music-cover-wrapper {
+    flex: 0 0 72px;
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+  }
+
+  .music-title {
+    font-size: 1.05rem;
+  }
+
+  .music-artist {
+    font-size: 0.82rem;
+  }
+
+  .music-controls {
+    gap: 14px;
+  }
+
+  .music-btn-prev,
+  .music-btn-next {
+    width: 38px;
+    height: 38px;
+  }
+
+  .music-btn-play {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+@media (max-width: 360px) {
+  .music-cover-wrapper {
+    flex: 0 0 62px;
+    width: 62px;
+    height: 62px;
+  }
+
+  .music-title {
+    font-size: 0.96rem;
+  }
+
+  .music-controls {
+    gap: 8px;
+  }
+
+  .music-btn-prev,
+  .music-btn-next {
+    width: 36px;
+    height: 36px;
+  }
+
+  .music-btn-play {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   14. MOBILE RESPONSIVE TWEAKS FOR SCENE 4 & MODAL
+   -------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  /* Letter scene: constrain widths so they fill the padded app-container */
+  #letter-scene {
+    width: 100%;
+    align-items: center;
+  }
+
+  .letter-card-container {
+    width: 100%;
+    max-width: 100%;
+    gap: 20px;
+  }
+
+  .letter-paper {
+    width: 100%;
+    max-width: 100%;
+    padding: clamp(18px, 4vw, 24px) clamp(14px, 4vw, 18px);
+    border-radius: 16px;
+    box-sizing: border-box;
+  }
+
+  .letter-content-scroll {
+    max-height: none;
+    padding-right: 4px;
+  }
+
+  .letter-salutation {
+    font-size: clamp(1.15rem, 4.5vw, 1.35rem);
+    margin-bottom: 12px;
+  }
+
+  .letter-body-text {
+    font-size: clamp(12.5px, 3.5vw, 13.5px);
+    line-height: 1.72;
+  }
+
+  .btn-skip-typing {
+    top: 12px;
+    right: 12px;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+  }
+
+  /* Download card */
+  .download-section {
+    width: 100%;
+  }
+
+  .download-card {
+    width: 100%;
+    max-width: 100%;
+    padding: clamp(16px, 4vw, 20px) clamp(14px, 4vw, 18px);
+    box-sizing: border-box;
+  }
+
+  .doc-title {
+    font-size: clamp(0.98rem, 3.5vw, 1.1rem);
+  }
+
+  .btn-download {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(0.88rem, 3vw, 1rem);
+    padding: clamp(11px, 1.8vh, 14px) clamp(16px, 4vw, 22px);
+  }
+
+  /* Music card */
+  .music-section {
+    width: 100%;
+  }
+
+  .music-card {
+    width: 100%;
+    max-width: 100%;
+    padding: clamp(16px, 4vw, 20px) clamp(14px, 4vw, 18px);
+    gap: 14px;
+    box-sizing: border-box;
+  }
+
+  .music-heading {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+  }
+
+  .music-subtitle {
+    font-size: clamp(0.78rem, 3vw, 0.88rem);
+  }
+
+  .music-widget {
+    padding: clamp(12px, 3vw, 16px) clamp(12px, 3vw, 14px);
+    gap: 12px;
+  }
+
+  .music-cover-wrapper {
+    flex: 0 0 clamp(60px, 16vw, 72px);
+    width: clamp(60px, 16vw, 72px);
+    height: clamp(60px, 16vw, 72px);
+    border-radius: 12px;
+  }
+
+  .music-title {
+    font-size: clamp(0.92rem, 3.5vw, 1.05rem);
+  }
+
+  .music-artist {
+    font-size: clamp(0.76rem, 2.8vw, 0.82rem);
+  }
+
+  .music-controls {
+    gap: 12px;
+  }
+
+  .music-btn-prev,
+  .music-btn-next {
+    width: 36px;
+    height: 36px;
+  }
+
+  .music-btn-play {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Verification modal */
+  .modal-dialog {
+    padding: 26px 18px;
+    border-radius: 22px;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    width: min(100%, 340px);
+  }
+
+  .modal-question {
+    font-size: clamp(1.2rem, 5vw, 1.45rem);
+  }
+
+  .modal-subtext {
+    font-size: 0.88rem;
+  }
+}
+
+
+/* ==========================================================================
+   FRIENDS MESSAGES SECTION
+   ========================================================================== */
+
+/* ---------- Section container ---------- */
+.friends-section {
+  width: 100%;
+  margin-top: 36px;
+  padding: 0 0 40px;
+  animation: friendsSectionFadeIn 0.7s ease forwards;
+}
+
+@keyframes friendsSectionFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Section header ---------- */
+.friends-section-header {
+  text-align: center;
+  margin: 0 auto 32px;
+  max-width: 640px;
+  background: rgba(255, 253, 248, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 24px 28px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--color-card-border);
+  box-shadow: var(--shadow-soft-md);
+}
+
+.friends-section-icon {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  display: block;
+  animation: gentlePulse 3s ease-in-out infinite;
+}
+
+.friends-heading {
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.friends-subheading {
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ---------- Grid layout ---------- */
+.friends-grid {
+  column-count: 2;
+  column-gap: 20px;
+  width: 100%;
+}
+
+/* Mobile single column */
+@media (max-width: 580px) {
+  .friends-grid {
+    column-count: 1;
+    column-gap: 0;
+  }
+}
+
+/* ---------- Individual message card ---------- */
+.friend-card {
+  background: rgba(255, 253, 248, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--color-card-border);
+  border-radius: var(--radius-md);
+  padding: 22px 20px 20px;
+  box-shadow: var(--shadow-soft-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 12px;
+  position: relative;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  height: auto;
+  width: 100%;
+  margin-bottom: 20px;
+  break-inside: avoid;
+
+  /* Scroll-reveal: start hidden, animated in by IntersectionObserver */
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+/* Scroll-reveal "visible" state applied via JS */
+.friend-card.is-visible {
+  animation: cardReveal 0.55s ease forwards;
+}
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Staggered delays driven by CSS custom property set by JS */
+.friend-card.is-visible {
+  animation-delay: var(--card-delay, 0ms);
+}
+
+/* Desktop hover lift */
+@media (hover: hover) {
+  .friend-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-soft-md);
+  }
+}
+
+/* Subtle warm left accent line */
+.friend-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3.5px;
+  background: linear-gradient(to bottom, var(--color-orange-soft), var(--color-yellow-accent));
+  border-radius: var(--radius-full);
+  opacity: 0.75;
+}
+
+/* ---------- Friend Header (Avatar Left, Name Right) ---------- */
+.friend-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+/* ---------- Avatar ---------- */
+.friend-avatar-wrapper {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--color-card-border);
+  box-shadow: 0 2px 8px rgba(92, 67, 52, 0.12);
+  background: var(--color-orange-light);
+}
+
+.friend-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+}
+
+/* Fallback placeholder when image is missing */
+.friend-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: var(--color-orange-light);
+  border-radius: 50%;
+  color: var(--color-orange-primary);
+  font-weight: 700;
+  font-family: var(--font-heading);
+  user-select: none;
+}
+
+/* ---------- Sender Name & Info ---------- */
+.friend-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.friend-name {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  letter-spacing: 0.2px;
+  line-height: 1.25;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Message text ---------- */
+.friend-message {
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  text-align: left;
+  word-break: break-word;
+  hyphens: auto;
+  width: 100%;
+  margin: 0;
+  padding-left: 2px;
+}
+
+/* ---------- Decorative quote mark ---------- */
+.friend-card .quote-mark {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: rgba(231, 138, 83, 0.22);
+  font-family: Georgia, 'Times New Roman', serif;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------- Friends section responsive tweaks ---------- */
+@media (max-width: 480px) {
+  .friends-section {
+    margin-top: 28px;
+    padding: 0 0 32px;
+  }
+
+  .friends-section-header {
+    padding: 18px 16px;
+    margin-bottom: 24px;
+  }
+
+  .friends-heading {
+    font-size: 1.25rem;
+  }
+
+  .friends-subheading {
+    font-size: 0.85rem;
+  }
+
+  .friend-card {
+    padding: 18px 16px 16px;
+    margin-bottom: 16px;
+  }
+
+  .friend-avatar-wrapper {
+    width: 46px;
+    height: 46px;
+  }
+
+  .friend-name {
+    font-size: 0.98rem;
+  }
+
+  .friend-message {
+    font-size: 0.88rem;
+  }
+}
+
+
+
+/* ==========================================================================
+   MOBILE CENTERING & OVERFLOW SAFETY - COMPREHENSIVE FINAL PASS
+   Targets all major mobile widths: 320px, 360px, 375px, 390px, 412px, 430px, 440px
+   ========================================================================== */
+@media (max-width: 600px) {
+
+  /* Additional friends section fixes */
+  .friends-section {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .friends-section-header {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .friends-heading {
+    font-size: clamp(1.1rem, 4.5vw, 1.3rem);
+  }
+
+  .friends-subheading {
+    font-size: clamp(0.8rem, 3vw, 0.88rem);
+  }
+
+  .friends-grid {
+    width: 100%;
+  }
+
+  .friend-card {
+    padding: clamp(14px, 4vw, 18px) clamp(12px, 4vw, 16px) clamp(14px, 4vw, 16px);
+    margin-bottom: 14px;
+    gap: 10px;
+  }
+
+  /* Background: no horizontal overflow */
+  .post-letter-bg,
+  .ambient-bg {
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
+  }
+
+  /* Body: ensure horizontal centering anchor */
+  body {
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* App container: horizontally centered, no side overflow */
+  .app-container {
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Every scene: full width, centered children */
+  .scene {
+    width: 100%;
+    max-width: 100%;
+    align-items: center;
+    overflow: visible;
+  }
+
+  /* Envelope stage: clamp width so it never overflows */
+  .envelope-stage {
+    padding: 24px 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .envelope-wrapper {
+    width: min(280px, calc(100vw - 40px));
+    max-width: 100%;
+  }
+
+  /* Prevent any section from overflowing horizontally */
+  .download-section,
+  .music-section {
+    overflow: visible;
+    max-width: 100%;
+  }
+}
+
+/* Extra-small screens: 320px-340px */
+@media (max-width: 340px) {
+  .app-container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .letter-paper {
+    padding: 14px 10px;
+  }
+
+  .friends-section-header {
+    padding: 14px 10px;
+  }
+
+  .friend-card {
+    padding: 12px 10px 12px;
+  }
+
+  .download-card,
+  .music-card {
+    padding: 14px 10px;
+  }
+
+  .music-cover-wrapper {
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
+  }
+}

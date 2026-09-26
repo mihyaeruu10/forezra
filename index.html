@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Love For Ezra</title>
+  <meta name="description" content="A warm, cozy interactive story and journey made with love.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Floating Background Particles -->
+  <div class="ambient-bg" id="ambient-bg" aria-hidden="true">
+    <div class="ambient-circle circle-1"></div>
+    <div class="ambient-circle circle-2"></div>
+    <div class="ambient-circle circle-3"></div>
+  </div>
+
+  <!-- Post-Letter Cinematic Background (assets/Background/Manips.jpg) -->
+  <div class="post-letter-bg" id="post-letter-bg" aria-hidden="true">
+    <div class="post-letter-overlay"></div>
+  </div>
+
+  <main class="app-container">
+
+    <!-- ================= SCENE 1: WELCOME SCREEN ================= -->
+    <section id="welcome-scene" class="scene active" aria-labelledby="welcome-title">
+      <div class="cozy-card welcome-card glass-panel">
+        
+        <!-- Decorative Cat Header Icon -->
+        <div class="card-badge-icon" aria-hidden="true">
+          <img src="assets/Background/Juhoon meng.jpg" alt="">
+        </div>
+
+        <span class="subtitle-text">Before we begin...</span>
+        <h1 id="welcome-title" class="title-text">What's your name?</h1>
+
+        <form id="welcome-form" class="input-group" onsubmit="return false;" novalidate>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="username-input" 
+              class="cozy-input" 
+              placeholder="Type your name..." 
+              autocomplete="off"
+              maxlength="24"
+              aria-label="Your Name"
+            />
+            <span class="input-icon" aria-hidden="true"></span>
+          </div>
+
+          <!-- Friendly Validation Message -->
+          <div id="validation-msg" class="validation-message hidden" role="alert">
+            <span class="val-icon">🐾</span>
+            <span class="val-text">Please enter a name so the orange cat knows who you are!</span>
+          </div>
+
+          <button type="submit" id="btn-continue" class="btn-primary">
+            <span>Continue</span>
+            <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </form>
+
+      </div>
+    </section>
+
+
+    <!-- ================= SCENE 2: INTRODUCTION SCREEN ================= -->
+    <section id="intro-scene" class="scene hidden" aria-labelledby="intro-greeting">
+      <div class="cozy-card intro-card glass-panel">
+        
+        <div class="card-badge-icon pulse-badge" aria-hidden="true">
+          <img src="assets/Background/Juhoon pose.jpg" alt="">
+        </div>
+
+        <h1 id="intro-greeting" class="title-text greeting-title">
+          Hi, <span id="display-username" class="highlight-name">Ezra</span>.
+        </h1>
+
+        <div class="intro-paragraphs">
+          <p class="cozy-p">I made something small for you.</p>
+          <p class="cozy-p highlight-p">
+            But you'll have to finish a tiny journey before opening what's waiting at the end.
+          </p>
+        </div>
+
+        <button type="button" id="btn-start-journey" class="btn-primary btn-journey">
+          <span class="btn-icon-lead">🐾</span>
+          <span>Start Journey</span>
+          <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+      </div>
+    </section>
+
+
+    <!-- ================= SCENE 3: MINIGAME PLACEHOLDER SCENE ================= -->
+    <section id="game-scene" class="scene hidden" aria-label="Orange Cat Journey Minigame">
+      
+      <div class="game-container glass-panel">
+        
+        <!-- HUD Header -->
+        <header class="game-hud">
+          <div class="hud-item hud-objective">
+            <span class="hud-icon">ς꒰´ ˆ ` ς ⑅ ꒱ა˒˒</span>
+            <span class="hud-text">
+              <span class="hud-text-full">Guide the orange cat to the letter</span>
+              <span class="hud-text-short">Guide cat to letter</span>
+            </span>
+          </div>
+
+          <div class="hud-item hud-collectibles">
+            <span class="hud-icon">°˖✧◝</span>
+            <span class="hud-text">Memories: <strong id="collectible-count">0 / 4</strong></span>
+          </div>
+        </header>
+
+        <!-- Canvas Viewport Wrapper -->
+        <div id="game-viewport" class="canvas-wrapper">
+          
+          <!-- HTML5 Game Canvas (800x500 native pixel resolution) -->
+          <canvas id="game-canvas" width="800" height="500" aria-label="Mini game map viewport"></canvas>
+
+          <!-- Floating Notification Message Toast Container -->
+          <div id="floating-msg-container" class="floating-msg-container" aria-live="polite"></div>
+
+          <!-- Loading & Transition Overlay Placeholder -->
+          <div id="game-loading-overlay" class="game-overlay">
+            <div class="spinner-box">
+              <div class="cat-loader" aria-hidden="true">
+                <span>🐱</span>
+              </div>
+              <p class="loading-text">Preparing the garden journey...</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Full Container Scene Fade & End Journey Overlay -->
+        <div id="game-fade-overlay" class="game-fade-overlay hidden">
+          <div id="end-journey-card" class="end-journey-card glass-panel hidden">
+            <div class="end-icon pulse-badge">💌</div>
+            <p id="end-journey-text" class="end-journey-text">Looks like someone has been waiting for you.</p>
+            <button type="button" id="btn-to-letter" class="btn-primary btn-letter-trigger hidden">
+              <span>Open the Letter</span>
+              <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Controls Helper & Mobile D-Pad Section -->
+        <footer class="game-controls-bar">
+          
+          <!-- Desktop Helper Instructions -->
+          <div class="desktop-controls-hint">
+            <span class="key-badge">W</span>
+            <span class="key-badge">A</span>
+            <span class="key-badge">S</span>
+            <span class="key-badge">D</span>
+            <span class="hint-divider">or</span>
+            <span class="key-badge">↑</span>
+            <span class="key-badge">←</span>
+            <span class="key-badge">↓</span>
+            <span class="key-badge">→</span>
+            <span class="hint-text">to walk</span>
+          </div>
+
+          <!-- Mobile D-Pad Placeholder Container -->
+          <div class="mobile-dpad" aria-label="On-screen directional controls">
+            <button type="button" class="dpad-btn dpad-up" data-dir="up" aria-label="Walk Up">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
+            <div class="dpad-row">
+              <button type="button" class="dpad-btn dpad-left" data-dir="left" aria-label="Walk Left">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+              <div class="dpad-center" aria-hidden="true">🐾</div>
+              <button type="button" class="dpad-btn dpad-right" data-dir="right" aria-label="Walk Right">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+            <button type="button" class="dpad-btn dpad-down" data-dir="down" aria-label="Walk Down">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+
+        </footer>
+
+      </div>
+    </section>
+
+    <!-- ================= SCENE 4: THE LETTER SCENE ================= -->
+    <section id="letter-scene" class="scene hidden" aria-label="A Letter for Ezra">
+      
+      <!-- Stage 1: Interactive Physical Envelope Animation Container -->
+      <div id="envelope-stage" class="envelope-stage">
+        <div class="envelope-wrapper" id="envelope-wrapper">
+          <!-- Envelope Back Plate -->
+          <div class="envelope-back"></div>
+          
+          <!-- Sliding Paper inside envelope -->
+          <div class="envelope-paper-slide" id="envelope-paper-slide">
+            <div class="paper-lines-preview">
+              <span class="preview-line line-1"></span>
+              <span class="preview-line line-2"></span>
+              <span class="preview-line line-3"></span>
+              <span class="preview-heart">💌</span>
+            </div>
+          </div>
+          
+          <!-- Envelope Front Pocket -->
+          <div class="envelope-pocket"></div>
+          
+          <!-- Envelope Top Flap (3D rotateX) -->
+          <div class="envelope-flap" id="envelope-flap">
+            <div class="wax-seal" id="wax-seal" aria-hidden="true">
+              <span>🐾</span>
+            </div>
+          </div>
+        </div>
+        <p class="envelope-hint-text">Opening your letter...</p>
+      </div>
+
+      <!-- Stage 2: Full Readable Letter Card & Paper View -->
+      <div id="letter-card-container" class="letter-card-container hidden">
+        
+        <!-- Physical Letter Paper Container -->
+        <article class="letter-paper" id="letter-paper">
+          
+          <!-- Letter Header with Decorative Stamp -->
+          <header class="letter-header">
+            <div class="letter-stamp" aria-hidden="true">
+              <span class="stamp-border">
+                <span class="stamp-cat">🐱</span>
+                <span class="stamp-postmark">SPECIAL DELIVERY</span>
+              </span>
+            </div>
+            <div class="letter-date" id="letter-date">September 2026</div>
+          </header>
+
+          <!-- Letter Salutation -->
+          <h2 class="letter-salutation" id="letter-salutation">Dear Ezra,</h2>
+
+          <!-- Scrollable Letter Body Area (Supports Long Multi-Paragraph Content) -->
+          <div class="letter-content-scroll" id="letter-content-scroll">
+            <div class="letter-body-text" id="letter-body-text">
+              <!-- Typewriter characters rendered here -->
+            </div>
+            <span class="typewriter-cursor" id="typewriter-cursor" aria-hidden="true">|</span>
+          </div>
+
+          <!-- Letter Sign-off / Closing -->
+          <div class="letter-closing hidden" id="letter-closing">
+            <p class="closing-phrase">With all my warmest thoughts,</p>
+            <p class="closing-signature">Forever rooting for you. 🧡</p>
+          </div>
+
+          <!-- Skip Typewriter floating button -->
+          <button type="button" id="btn-skip-typing" class="btn-skip-typing" title="Click to show full letter immediately">
+            <span>Skip animation</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+          </button>
+        </article>
+
+        <!-- ================= DOCUMENT DOWNLOAD SECTION ================= -->
+        <section id="download-section" class="download-section hidden" aria-labelledby="download-title">
+          <div class="download-card glass-panel">
+            <div class="doc-badge-icon" aria-hidden="true">
+              <div class="doc-icon-svg">
+                <svg width="40" height="48" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Document Page Shape -->
+                  <path d="M4 4C4 1.79086 5.79086 0 8 0H26L38 12V44C38 46.2091 36.2091 48 34 48H8C5.79086 48 4 46.2091 4 44V4Z" fill="#FFFFFF"/>
+                  <path d="M26 0L38 12H30C27.7909 12 26 10.2091 26 8V0Z" fill="#DDE3EA"/>
+                  <!-- Word Blue Badge -->
+                  <rect x="0" y="14" width="22" height="20" rx="4" fill="#2B579A"/>
+                  <text x="5" y="29" fill="#FFFFFF" font-family="'Nunito', sans-serif" font-weight="900" font-size="14">W</text>
+                  <!-- Document lines -->
+                  <line x1="26" y1="20" x2="33" y2="20" stroke="#B0BEC5" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="26" y1="26" x2="33" y2="26" stroke="#B0BEC5" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="10" y1="40" x2="30" y2="40" stroke="#CFD8DC" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="doc-info">
+              <h3 id="download-title" class="doc-title">A little something to keep</h3>
+              <p class="doc-format">Microsoft Word Document &bull; <span class="doc-ext">.docx</span></p>
+            </div>
+
+            <button type="button" id="btn-open-download-modal" class="btn-primary btn-download">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span id="download-btn-text">Download the Document</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- ================= MUSIC PLAYER SECTION ================= -->
+        <section id="music-section" class="music-section hidden" aria-labelledby="music-heading">
+          <div class="music-card glass-panel">
+            <div class="music-header">
+              <div class="music-copy">
+                <h3 id="music-heading" class="music-heading">A little song for you</h3>
+                <p id="music-subtitle" class="music-subtitle">Maybe listen to this while you read the messages below.</p>
+              </div>
+            </div>
+
+            <div class="music-widget">
+              <!-- Top Row: Artwork + Song Meta -->
+              <div class="music-top-row">
+                <div class="music-cover-wrapper" id="music-cover-wrapper">
+                  <img id="music-cover-img" class="music-cover-img" src="assets/Background/Manips%20widget%201.jpg" alt="Album artwork" />
+                  <div id="music-cover" class="music-cover-fallback hidden" aria-hidden="true"></div>
+                </div>
+
+                <div class="music-meta">
+                  <div id="music-title" class="music-title">Futile Devices</div>
+                  <div id="music-artist" class="music-artist">Sufjan Stevens</div>
+                </div>
+              </div>
+
+              <!-- Middle Row: Progress Bar & Timestamps -->
+              <div class="music-progress-wrap">
+                <div id="music-progress" class="music-progress" aria-label="Playback progress" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                  <div id="music-progress-bar" class="music-progress-bar"></div>
+                </div>
+
+                <div class="music-times">
+                  <span id="music-current-time" class="music-time-current">0:00</span>
+                  <span class="music-time-sep">/</span>
+                  <span id="music-duration" class="music-time-duration">--:--</span>
+                </div>
+              </div>
+
+              <!-- Bottom Row: Controls -->
+              <div class="music-bottom-row">
+                <div class="music-controls" aria-label="Music controls">
+                  <button id="music-prev" class="music-btn music-btn-prev" type="button" aria-label="Previous song" title="Previous song">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                    </svg>
+                  </button>
+                  <button id="music-play" class="music-btn music-btn-play" type="button" aria-label="Play song" title="Play / Pause">
+                    <svg id="music-play-icon" class="music-icon-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="music-pause-icon" class="music-icon-pause hidden" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                  </button>
+                  <button id="music-next" class="music-btn music-btn-next" type="button" aria-label="Next song" title="Next song">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= FRIENDS MESSAGES SECTION ================= -->
+        <section id="friends-section" class="friends-section hidden" aria-labelledby="friends-heading">
+          <div class="friends-section-header">
+            <div class="friends-section-icon" aria-hidden="true">૮(ྀི づ 𖥦◝ )ྀིა ◞ ͘ ࣭⸰</div>
+            <h2 class="friends-heading" id="friends-heading">Messages from the people rooting for us</h2>
+            <p class="friends-subheading" id="friends-subheading">A little something from the people who are happy to see us together.</p>
+          </div>
+
+          <!-- Cards are injected here dynamically by FriendsModule.render() -->
+          <div id="friends-grid" class="friends-grid" role="list" aria-label="Friend messages"></div>
+        </section>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= VERIFICATION MODAL ("Lu Ezra bukan?") ================= -->
+  <div id="verification-modal" class="verification-modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-question">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    
+    <div class="modal-dialog glass-panel" id="modal-dialog">
+      <!-- Cute Modal Icon Badge -->
+      <div class="modal-icon-badge" id="modal-icon-badge" aria-hidden="true">
+        <img src="assets/Background/Juhoon grr.jpg" alt="">
+      </div>
+
+      <h3 id="modal-question" class="modal-question">Lu Ezra bukan?</h3>
+      <p class="modal-subtext" id="modal-subtext">Eh kalau bukan Ezra jangan dibuka yaa ! </p>
+
+      <!-- Dynamic Feedback Box -->
+      <div id="modal-feedback-box" class="modal-feedback-box hidden">
+        <p id="modal-feedback-text" class="modal-feedback-text"></p>
+      </div>
+
+      <!-- Yes / No Choice Buttons -->
+      <div class="modal-actions" id="modal-actions">
+        <button type="button" id="btn-verify-yes" class="btn-primary btn-verify-yes">
+          <span>Ya</span>
+        </button>
+        <button type="button" id="btn-verify-no" class="btn-secondary btn-verify-no">
+          <span>Tidak</span>
+        </button>
+      </div>
+
+      <!-- Close button when feedback is shown -->
+      <button type="button" id="btn-modal-close" class="btn-secondary btn-modal-close hidden">
+        <span>Kembali ke Surat</span>
+      </button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
