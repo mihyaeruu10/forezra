@@ -30,13 +30,12 @@ const CONFIG = {
   letter: {
     salutation: "Dear Ezra,",
     date: "September 2026",
-    // Multi-paragraph dummy content (Lorem Ipsum) to test long letters
     paragraphs: [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.",
-      "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi."
+      "I don't really know how to put everything I feel into a few words, but I wanted to try anyway. Meeting you became one of those little things in life that I didn't expect, but somehow ended up meaning more to me than I thought it would.",
+      "I love the way even ordinary moments can feel a little different when they're shared with you. Sometimes it isn't about doing something special. Just knowing that you're there, talking about random things, laughing at something stupid, or simply spending time together is already enough to make my day feel warmer.",
+      "I hope you know how much I appreciate you. Not because everything is always feel like perfect, but because you're someone I genuinely want to keep knowing, understanding, and growing alongside. I don't need to know exactly where everything will take us. I'm just happy that somehow, our paths crossed.",
+      "So if there are days when things feel difficult, I hope we can keep choosing patience, honesty, and each other. Let's keep making small memories, keep laughing at things that probably aren't even funny, and keep finding reasons to stay close even when life gets busy.",
+      "And if I could keep one thing from all of this, it would simply be the fact that I got to meet you. Out of all the people and all the possible paths, somehow I found you."
     ],
     closingPhrase: "With all my warmest thoughts,",
     closingSignature: "Forever rooting for you. 🧡",
